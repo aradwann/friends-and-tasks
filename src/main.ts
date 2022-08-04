@@ -6,6 +6,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
+      // setting whitelist to true trim any additional unwanted props/values in the request body
+      // that's not defined by the dto and doesn't have validation decorators
+      whitelist: true,
       transformOptions: {
         // enable implicit conversion of the received params over the network
         // as the network transfer all values as strings we need to convert them
