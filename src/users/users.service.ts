@@ -51,6 +51,18 @@ export class UsersService {
     return user;
   }
 
+  async findOneByUsername(username: string) {
+    const user = await this.userRepo.findOneBy({ username });
+
+    // throw 404 error id user is not found
+    if (!user) {
+      throw new NotFoundException(
+        `user with username ${username} is not found`,
+      );
+    }
+    return user;
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.userRepo.preload({
       id,

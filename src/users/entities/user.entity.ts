@@ -22,7 +22,8 @@ export class User {
   // doesn't return the password field with the user object
   // except when explicty selected with .addSelect('password') on QueryBuilder
   // this to protect  hashed password from being exposed within normal queries
-  @Column({ select: false })
+  // @Column({ select: false })
+  @Column()
   password: string;
 
   @CreateDateColumn()
