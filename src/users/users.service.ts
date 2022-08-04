@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -35,8 +36,9 @@ export class UsersService {
     return this.userRepo.save(newUser);
   }
 
-  async findAll() {
-    return this.userRepo.find();
+  async findAll(paginationQuery: PaginationQueryDto) {
+    const { limit, offset } = paginationQuery;
+    return this.userRepo.find({ skip: offset, take: limit });
   }
 
   async findOne(id: number) {
