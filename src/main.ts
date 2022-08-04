@@ -1,9 +1,12 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  //////////////////// SETUP VALIDATION PIPE ///////////////
   app.useGlobalPipes(
     new ValidationPipe({
       // setting whitelist to true trim any additional unwanted props/values in the request body
@@ -19,6 +22,17 @@ async function bootstrap() {
       },
     }),
   );
+
+  ////////////////////////////// SETUP SWAGGER (OPEN API) ////////////////////////
+  const options = new DocumentBuilder()
+    .setTitle('Friends and Tasks')
+    .setDescription('Users who are friend and working on tasks together')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(3000);
 }
 bootstrap();
