@@ -19,7 +19,10 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  // doesn't return the password field with the user object
+  // except when explicty selected with .addSelect('password') on QueryBuilder
+  // this to protect  hashed password from being exposed within normal queries
+  @Column({ select: false })
   password: string;
 
   @CreateDateColumn()
