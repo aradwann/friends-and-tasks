@@ -33,7 +33,7 @@ export class User {
   updateDate: Date;
 
   @BeforeInsert()
-  async hashPassowrd() {
+  private async hashPassowrd() {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
