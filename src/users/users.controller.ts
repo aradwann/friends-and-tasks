@@ -12,9 +12,9 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')

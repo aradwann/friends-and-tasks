@@ -6,3 +6,11 @@ services:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: password
+
+  test-db:
+    image: postgres:14.4-alpine
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_PASSWORD: password
