@@ -25,9 +25,10 @@ async function bootstrap() {
 
   ////////////////////////////// SETUP SWAGGER (OPEN API) ////////////////////////
   const options = new DocumentBuilder()
-    .setTitle('Friends and Tasks')
-    .setDescription('Users who are friend and working on tasks together')
+    .setTitle('Tasks')
+    .setDescription('Users who are working on tasks together')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
