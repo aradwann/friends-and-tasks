@@ -1,4 +1,4 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -10,6 +10,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard) // this decorator envokes (glues up) the local strategy code to authenticate the user credentials
   @Post('login')
+  @HttpCode(200)
   async login(@Request() req) {
     return this.authService.login(req.user);
   }

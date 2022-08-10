@@ -12,12 +12,12 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, password: string) {
-    const user = await this.userService.findOneByUsername(username);
+    const user = await this.userService.findOneByUsernameWithPassword(username);
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (user && isMatch) {
-      return user;
+      return await this.userService.findOne(user.id);
     }
     return null;
   }

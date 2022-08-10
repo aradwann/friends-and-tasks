@@ -51,8 +51,11 @@ export class UsersService {
     return user;
   }
 
-  async findOneByUsername(username: string) {
-    const user = await this.userRepo.findOneBy({ username });
+  async findOneByUsernameWithPassword(username: string) {
+    const user = await this.userRepo.findOne({
+      where: { username },
+      select: ['id', 'username', 'password'],
+    });
 
     // throw 404 error id user is not found
     if (!user) {
