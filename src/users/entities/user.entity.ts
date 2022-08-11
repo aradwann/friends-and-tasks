@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { IsEmail, IsString, MinLength } from 'class-validator';
-import { Task } from 'src/tasks/entities/task.entity';
+import { Task } from '../../tasks/entities/task.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
