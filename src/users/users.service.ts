@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -67,25 +67,21 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.userRepo.preload({
-      id,
-      ...updateUserDto,
-    });
-    // throw 404 error id user is not found
-    if (!user) {
-      throw new NotFoundException(`user with id ${id} is not found`);
-    }
+    const user = await this.findOne(id);
+
+    this.userRepo.update(id, updateUserDto);
 
     return this.userRepo.save(user);
   }
 
   async remove(id: number) {
-    const user = await this.userRepo.findOneBy({ id });
+    const user = await this.findOne(id);
 
-    // throw 404 error id user is not found
-    if (!user) {
-      throw new NotFoundException(`user with id ${id} is not found`);
-    }
     return this.userRepo.remove(user);
+  }
+
+  async findUsersByIdArray(idArray: number[]) {
+    const users = await this.userRepo.findBy({ id: In(idArray) });
+    return users;
   }
 }
