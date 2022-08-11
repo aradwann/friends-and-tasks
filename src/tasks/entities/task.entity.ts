@@ -1,5 +1,6 @@
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -12,7 +13,7 @@ import {
 import { Status } from '../enums/status.enum';
 
 @Entity()
-export class Task {
+export class Task extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -36,15 +37,10 @@ export class Task {
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(
-    () => User,
-    (user) => {
-      user.tasks;
-    },
-  )
+  @ManyToOne(() => User, (user) => user.tasks, { eager: true })
   assignor: User;
 
-  @ManyToMany(() => User)
+  @ManyToMany(() => User, { eager: true })
   @JoinTable()
   assignees: User[];
 }

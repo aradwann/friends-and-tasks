@@ -1,26 +1,76 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
+import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { Task } from './entities/task.entity';
 
 @Injectable()
 export class TasksService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+  constructor(
+    @InjectRepository(Task) private taskRepo: Repository<Task>,
+    private readonly usersService: UsersService,
+  ) {}
+
+  async create(createTaskDto: CreateTaskDto, user: User) {
+    const { assignees, ...restOfCreateDto } = createTaskDto;
+
+    const newTask = this.taskRepo.create(restOfCreateDto);
+    newTask.assignor = user;
+    newTask.assignees = await this.usersService.findUsersByIdArray(assignees);
+
+    await newTask.save();
+
+    return this.taskRepo.save(newTask);
   }
 
-  findAll() {
-    return `This action returns all tasks`;
+  findAll(paginationQuery: PaginationQueryDto) {
+    const { limit, offset } = paginationQuery;
+    return this.taskRepo.find({ skip: offset, take: limit });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  async findOne(id: number) {
+    const user = await this.taskRepo.findOneBy({ id });
+
+    // throw 404 error id user is not found
+    if (!user) {
+      throw new NotFoundException(`user with id ${id} is not found`);
+    }
+    return user;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: number, updateTaskDto: UpdateTaskDto) {
+    // extract the assignees (users) ids array from update dto
+    const { assignees, ...restOfUpdateDto } = updateTaskDto;
+
+    // grab user objects that match ids array from the database
+    const usersAssignees = await this.usersService.findUsersByIdArray(
+      assignees,
+    );
+
+    const task = await this.taskRepo.preload({
+      id,
+      ...restOfUpdateDto,
+      assignees: usersAssignees,
+    });
+    // throw 404 error id task is not found
+    if (!task) {
+      throw new NotFoundException(`task with id ${id} is not found`);
+    }
+
+    return this.taskRepo.save(task);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async remove(id: number) {
+    const task = await this.taskRepo.findOneBy({ id });
+
+    // throw 404 error id task is not found
+    if (!task) {
+      throw new NotFoundException(`task with id ${id} is not found`);
+    }
+    return this.taskRepo.remove(task);
   }
 }
