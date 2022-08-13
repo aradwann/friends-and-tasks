@@ -17,7 +17,8 @@ import * as Joi from 'joi';
           .default('development'),
         PORT: Joi.number().default(8000),
         DATABASE_HOST: Joi.required(),
-        DATABASE_PORT: Joi.number().default(5432),
+        // the default needs to be changed once I create env vars file for each NODE_ENV state
+        DATABASE_PORT: Joi.number().default(5433),
       }),
     }),
     TypeOrmModule.forRoot({
