@@ -10,6 +10,7 @@ import * as Joi from 'joi';
 
 @Module({
   imports: [
+    // this should be imported first because the following modules depends on it
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         NODE_ENV: Joi.string()
