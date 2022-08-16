@@ -15,6 +15,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RoleEnum } from './enums/role.enum';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -26,7 +29,8 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.Admin)
   @Get()
   findAll(@Query() paginationQuery: PaginationQueryDto) {
     return this.usersService.findAll(paginationQuery);
