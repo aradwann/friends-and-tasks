@@ -55,6 +55,7 @@ export class UsersService {
     const user = await this.userRepo.findOne({
       where: { username },
       select: ['id', 'username', 'password'],
+      relations: ['roles'],
     });
 
     // throw 404 error id user is not found

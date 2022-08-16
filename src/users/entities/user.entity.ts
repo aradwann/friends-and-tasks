@@ -9,7 +9,9 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
+import { Role } from './role.entity';
 
 @Entity()
 export class User {
@@ -46,10 +48,13 @@ export class User {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
-  @OneToMany(() => Task, (task) => task.assignor)
-  tasks: Task[];
+  @ManyToMany(() => Role, (role) => role.users)
+  roles: Role[];
 
-  // @ManyToMany(() => User[],() => {} )
-  // @JoinTable()
-  // friends: User[];
+  @OneToMany(() => Task, (task) => task.assignor)
+  tasks_posted: Task[];
+
+  // tasks assigned to this user
+  @ManyToMany(() => Task, (task) => task.assignees)
+  tasks_assigned_to_user: Task[];
 }
