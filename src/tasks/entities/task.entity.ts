@@ -37,10 +37,15 @@ export class Task extends BaseEntity {
   @UpdateDateColumn()
   updateDate: Date;
 
-  @ManyToOne(() => User, (user) => user.tasks, { eager: true })
+  @ManyToOne(() => User, (user) => user.tasks_posted, {
+    eager: true,
+    onDelete: 'CASCADE', // if the assignor is the task is deleted, then the task is deleted
+  })
   assignor: User;
 
-  @ManyToMany(() => User, { eager: true })
+  @ManyToMany(() => User, (user) => user.tasks_assigned_to_user, {
+    eager: true,
+  })
   @JoinTable()
   assignees: User[];
 }
