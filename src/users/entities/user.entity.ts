@@ -12,6 +12,7 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { Role } from './role.entity';
+import { Workspace } from 'src/workspaces/entities/workspace.entity';
 
 @Entity()
 export class User {
@@ -57,4 +58,11 @@ export class User {
   // tasks assigned to this user
   @ManyToMany(() => Task, (task) => task.assignees)
   tasks_assigned_to_user: Task[];
+
+  @OneToMany(() => Workspace, (workspace) => workspace.creator)
+  workspaces_created: Workspace[];
+
+  // workspaces joined by the user
+  @ManyToMany(() => Workspace, (workspace) => workspace.users)
+  workspaces_joined: Workspace[];
 }
