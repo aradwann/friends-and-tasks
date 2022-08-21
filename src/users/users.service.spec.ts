@@ -17,7 +17,7 @@ describe('UsersService', () => {
   let service: UsersService;
   let userRepo: MockRepository;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
@@ -56,44 +56,45 @@ describe('UsersService', () => {
       expect(createdUser).toEqual(user);
     });
 
-    it('username alread exists', async () => {
+    it('username already exists', async () => {
       const user: CreateUserDto = {
         username: 'test',
         email: 'test@email.com',
         password: 'testpassword',
       };
 
-      userRepo.findOneBy.mockReturnValue({ username: 'test' });
+      userRepo.findOneBy.mockReturnValue({
+        username: 'test',
+        email: 'test@email.com',
+        password: 'testpassword',
+      });
       try {
-        const createdUser = await service.create({
-          username: 'test',
-          email: 'test@email.com',
-          password: 'testpassword',
-        });
+        await service.create(user);
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
         expect(error.message).toEqual('username is already taken');
       }
     });
-    it.todo('email is already taken');
-    // it('email already exists', async () => {
-    //   const user: CreateUserDto = {
-    //     username: 'test',
-    //     email: 'test@email.com',
-    //     password: 'testpassword',
-    //   };
-    //   userRepo.findOneBy.mockReturnValue({ email: 'test@email.com' });
-    //   try {
-    //     const createdUser = await service.create({
-    //       username: 'test',
-    //       email: 'test@email.com',
-    //       password: 'testpassword',
-    //     });
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(BadRequestException);
-    //     expect(error.message).toEqual('email is already taken');
-    //   }
-    // });
+
+    it('email already exists', async () => {
+      const user: CreateUserDto = {
+        username: 'test',
+        email: 'test@email.com',
+        password: 'testpassword',
+      };
+      // mocking it to return null the first time (where it's validating username) and return the same email next time
+      userRepo.findOneBy.mockReturnValueOnce(null).mockReturnValue({
+        username: 'test22222222',
+        email: 'test@email.com',
+        password: 'testpassword',
+      });
+      try {
+        await service.create(user);
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toEqual('email is already taken');
+      }
+    });
   });
   it.todo('update');
   it.todo('findall');

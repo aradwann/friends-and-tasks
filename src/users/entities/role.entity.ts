@@ -15,7 +15,7 @@ export class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ enum: RoleEnum })
+  @Column({ enum: RoleEnum, unique: true })
   title: RoleEnum;
 
   @ManyToMany(() => User, (user) => user.roles)
