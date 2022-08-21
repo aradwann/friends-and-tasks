@@ -22,8 +22,6 @@ export class TasksService {
     newTask.assignor = user;
     newTask.assignees = await this.usersService.findUsersByIdArray(assignees);
 
-    await newTask.save();
-
     return this.taskRepo.save(newTask);
   }
 

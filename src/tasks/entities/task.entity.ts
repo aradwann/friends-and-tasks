@@ -1,6 +1,5 @@
 import { User } from '../../users/entities/user.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,10 +9,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Status } from '../enums/status.enum';
+import { Status } from './status.entity';
 
 @Entity()
-export class Task extends BaseEntity {
+export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -23,23 +22,20 @@ export class Task extends BaseEntity {
   @Column()
   description: string;
 
-  @Column({
-    type: 'enum',
-    enum: Status,
-    nullable: true,
-    default: Status.OPEN,
-  })
-  status: Status;
-
   @CreateDateColumn()
   createDate: Date;
 
   @UpdateDateColumn()
   updateDate: Date;
 
+  @ManyToOne(() => Status, (status) => status.tasks, {
+    eager: true,
+  })
+  status: Status;
+
   @ManyToOne(() => User, (user) => user.tasks_posted, {
     eager: true,
-    onDelete: 'CASCADE', // if the assignor is the task is deleted, then the task is deleted
+    onDelete: 'CASCADE', // if the assignor of the task is deleted, then the task is deleted
   })
   assignor: User;
 
