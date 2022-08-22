@@ -4,8 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
-import { In, Repository } from 'typeorm';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { Repository, In } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -70,9 +70,7 @@ export class UsersService {
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
 
-    this.userRepo.update(id, updateUserDto);
-
-    return this.userRepo.save(user);
+    return this.userRepo.update(id, updateUserDto);
   }
 
   async remove(id: number) {
@@ -81,8 +79,25 @@ export class UsersService {
     return this.userRepo.remove(user);
   }
 
-  async findUsersByIdArray(idArray: number[]) {
-    const users = await this.userRepo.findBy({ id: In(idArray) });
+  /**
+   * find each user with the corresponding id in the id Array
+   * Note: it returns distict users so even if the ids are repeated in the array
+   *       it still returns an array of unique users
+   * @param idsArray Array of users ids
+   * @returns array of users found in the database
+   */
+  async findUsersByIdArray(idsArray: number[]) {
+    const uniqueIdsSet = new Set(idsArray);
+    const uniqueIdsArr = [...uniqueIdsSet];
+    const users = await this.userRepo.findBy({ id: In(uniqueIdsArr) });
+
+    // this is the same query but with using the query builder
+
+    // const users = await this.userRepo
+    //   .createQueryBuilder('user')
+    //   .whereInIds(idsArray)
+    //   .getMany();
+
     return users;
   }
 }
