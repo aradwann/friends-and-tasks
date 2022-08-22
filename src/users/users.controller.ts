@@ -29,7 +29,7 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles(RoleEnum.Admin)
   @Get()
   findAll(@Query() paginationQuery: PaginationQueryDto) {
