@@ -30,7 +30,11 @@ async function bootstrap() {
   ////////////////////////////// SETUP SWAGGER (OPEN API) ////////////////////////
   const options = new DocumentBuilder()
     .setTitle('Tasks')
-    .setDescription('Users who are working on tasks together')
+    .setDescription(
+      'A User can create workspace/s and add other users to or remove them from the workspace he created\
+       only the creator of the workspace can add or remove users\
+      ,users in the workspace can post tasks in the workspace and assign it to one or more users in the same workspace ',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();
