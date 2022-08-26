@@ -10,5 +10,6 @@ import { Status } from './entities/status.entity';
   imports: [TypeOrmModule.forFeature([Task, Status]), UsersModule],
   controllers: [TasksController],
   providers: [TasksService],
+  exports: [TasksService],
 })
 export class TasksModule {}

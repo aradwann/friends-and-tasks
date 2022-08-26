@@ -1,27 +1,21 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
   Delete,
-  Request,
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
-
-  @Post()
-  create(@Request() request, @Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto, request.user);
-  }
 
   @Get()
   findAll(@Query() paginationQuery: PaginationQueryDto) {

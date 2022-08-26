@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
+import { Workspace } from 'src/workspaces/entities/workspace.entity';
 
 @Injectable()
 export class TasksService {
@@ -15,12 +16,13 @@ export class TasksService {
     private readonly usersService: UsersService,
   ) {}
 
-  async create(createTaskDto: CreateTaskDto, user: User) {
+  async create(createTaskDto: CreateTaskDto, user: User, workspace: Workspace) {
     const { assignees, ...restOfCreateDto } = createTaskDto;
 
     const newTask = this.taskRepo.create(restOfCreateDto);
     newTask.assignor = user;
     newTask.assignees = await this.usersService.findUsersByIdArray(assignees);
+    newTask.workspace = workspace;
 
     return this.taskRepo.save(newTask);
   }
@@ -28,6 +30,19 @@ export class TasksService {
   findAll(paginationQuery: PaginationQueryDto) {
     const { limit, offset } = paginationQuery;
     return this.taskRepo.find({ skip: offset, take: limit });
+  }
+
+  findAllTasksInWorkspace(
+    workspaceId: number,
+    paginationQuery: PaginationQueryDto,
+  ) {
+    const { limit, offset } = paginationQuery;
+    return this.taskRepo.find({
+      skip: offset,
+      take: limit,
+      relations: { workspace: true },
+      where: { workspace: { id: workspaceId } },
+    });
   }
 
   async findOne(id: number) {
