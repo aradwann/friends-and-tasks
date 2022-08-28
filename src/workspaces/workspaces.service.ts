@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,6 +14,7 @@ import { UsersIdsDto } from '../users/dto/usersIds.dto';
 import { Workspace } from './entities/workspace.entity';
 import { TasksService } from 'src/tasks/tasks.service';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
+import { UpdateTaskDto } from 'src/tasks/dto/update-task.dto';
 
 @Injectable()
 export class WorkspacesService {
@@ -76,6 +76,7 @@ export class WorkspacesService {
     return this.workspaceRepo.remove(workspace);
   }
 
+  //////////////////////// users //////////////////////////////
   async getWorkspaceUsers(id: number) {
     const workspace = await this.workspaceRepo.findOne({
       where: { id },
@@ -139,8 +140,36 @@ export class WorkspacesService {
   checkIfUserInWorkspace(user: User, workspace: Workspace) {
     return workspace.users.includes(user);
   }
+  /**
+   * check if each user in the users array is in the workspace
+   * @param users the users array
+   * @param workspace workspace
+   * @returns an array of user ids that's not in the workspace
+   */
+  checkIfUserArrayInWorkspace(users: User[], workspace: Workspace) {
+    const notInWorkspaceArr = users.map((user) => {
+      if (!this.checkIfUserInWorkspace(user, workspace)) {
+        return user.id;
+      }
+    });
+    return notInWorkspaceArr;
+  }
 
-  //////////////// tasks ////////////////
+  ///////////////////////////////// tasks ////////////////////////
+
+  async checkIfUserIsTaskAssignorORWorkspaceCreator(
+    workspaceId: number,
+    taskId: number,
+    user: User,
+  ) {
+    const workspace = await this.findOne(workspaceId);
+    const task = await this.findTaskInWorkspace(workspaceId, taskId);
+
+    if (user !== task.assignor && user !== workspace.creator) {
+      return false;
+    }
+    return true;
+  }
 
   async createTask(
     workspace: Workspace,
@@ -152,7 +181,6 @@ export class WorkspacesService {
       currentUser,
       workspace,
     );
-
     return newTask;
   }
 
@@ -160,9 +188,45 @@ export class WorkspacesService {
     workspaceId: number,
     paginationQuery: PaginationQueryDto,
   ) {
-    const workspace = this.tasksService.findAllTasksInWorkspace(
-      workspaceId,
-      paginationQuery,
+    // const tasks = this.tasksService.findAllTasksInWorkspace(
+    //   workspaceId,
+    //   paginationQuery,
+    // );
+
+    const workspace = await this.findOne(workspaceId);
+    return workspace.tasks;
+  }
+
+  async findTaskInWorkspace(workspaceId: number, taskId: number) {
+    const task = this.tasksService.findTaskInWorkspace(workspaceId, taskId);
+    return task;
+  }
+
+  async updateTaskInWorkspace(
+    workspaceId,
+    taskId,
+    updateTaskDto: UpdateTaskDto,
+  ) {
+    const task = await this.findTaskInWorkspace(workspaceId, taskId);
+    const workspace = await this.findOne(workspaceId);
+    // get the array of assignees ids
+    const usersArray = await this.usersService.findUsersByIdArray(
+      updateTaskDto.assignees,
     );
+    // check if all assignees in the workspace
+    const idsNotFoundInWorkspace = this.checkIfUserArrayInWorkspace(
+      usersArray,
+      workspace,
+    );
+    if (idsNotFoundInWorkspace.length > 0) {
+      throw new NotFoundException(
+        `users with the ids ${idsNotFoundInWorkspace.toString()} are not found in the workspace`,
+      );
+    }
+    return this.tasksService.update(taskId, updateTaskDto);
+  }
+  async deleteTaskFromWorkspace(workspaceId: number, taskId: number) {
+    const task = await this.findTaskInWorkspace(workspaceId, taskId);
+    return await this.tasksService.remove(task.id);
   }
 }

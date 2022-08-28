@@ -121,18 +121,53 @@ export class WorkspacesController {
     return this.workspacesService.findAllTasksInWorkspace(id, paginationQuery);
   }
 
-  // @Get(':id/tasks/:task_id')
-  // findOneTask(@Param('id') id: string) {
-  //   return this.tasksService.findOne(+id);
-  // }
+  @Get(':id/tasks/:taskId')
+  findOneTask(@Param('id') id: number, @Param('taskId') taskId: number) {
+    return this.workspacesService.findTaskInWorkspace(id, taskId);
+  }
 
-  // @Patch(':id/tasks/:task_id')
-  // updateTask(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-  //   return this.tasksService.update(+id, updateTaskDto);
-  // }
+  @Patch(':id/tasks/:taskId')
+  async updateTask(
+    @Param('id') id: number,
+    @Param('taskId') taskId: number,
+    @Body() updateTaskDto: UpdateTaskDto,
+    @CurrentUser() currentUser: User,
+  ) {
+    const canUpdateTask =
+      await this.workspacesService.checkIfUserIsTaskAssignorORWorkspaceCreator(
+        id,
+        taskId,
+        currentUser,
+      );
+    if (!canUpdateTask) {
+      throw new ForbiddenException(
+        'only task creator or workspace creator can update the task',
+      );
+    }
+    return this.workspacesService.updateTaskInWorkspace(
+      id,
+      taskId,
+      updateTaskDto,
+    );
+  }
 
-  // @Delete(':id/tasks/:task_id')
-  // removeTask(@Param('id') id: string) {
-  //   return this.tasksService.remove(+id);
-  // }
+  @Delete(':id/tasks/:taskId')
+  async removeTask(
+    @Param('id') id: number,
+    @Param('taskId') taskId: number,
+    @CurrentUser() currentUser: User,
+  ) {
+    const canDeleteTask =
+      await this.workspacesService.checkIfUserIsTaskAssignorORWorkspaceCreator(
+        id,
+        taskId,
+        currentUser,
+      );
+    if (!canDeleteTask) {
+      throw new ForbiddenException(
+        'only task creator or workspace creator can delete the task',
+      );
+    }
+    return this.workspacesService.deleteTaskFromWorkspace(id, taskId);
+  }
 }

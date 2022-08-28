@@ -16,6 +16,8 @@ export class TasksService {
     private readonly usersService: UsersService,
   ) {}
 
+  ///////////////////// CREATE TASK ///////////////////////////////
+
   async create(createTaskDto: CreateTaskDto, user: User, workspace: Workspace) {
     const { assignees, ...restOfCreateDto } = createTaskDto;
 
@@ -26,6 +28,8 @@ export class TasksService {
 
     return this.taskRepo.save(newTask);
   }
+
+  //////////////////////////////// TASKS QUERIES ////////////////////////////
 
   findAll(paginationQuery: PaginationQueryDto) {
     const { limit, offset } = paginationQuery;
@@ -53,6 +57,19 @@ export class TasksService {
       throw new NotFoundException(`user with id ${id} is not found`);
     }
     return user;
+  }
+
+  async findTaskInWorkspace(workspaceId: number, taskId: number) {
+    const task = this.taskRepo.findOne({
+      relations: { workspace: true },
+      where: { id: taskId, workspace: { id: workspaceId } },
+    });
+
+    // throw 404 error id user is not found
+    if (!task) {
+      throw new NotFoundException(`task with id ${taskId} is not found`);
+    }
+    return task;
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {
