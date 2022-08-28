@@ -10,9 +10,9 @@ an application for task management for teams
 - [x] only the creator of the workspace can add or remove users
 - [x] users in the workspace can post tasks in the workspace 
 - [x] only users in the workspace can view the tasks in that workspace
-- [ ]  users in workspace assign it to one or more users in the same workspace
-- [ ] workspace creator or task poster can edit the task
-- [ ] workspace creator or task poster can delete the task
+- [x]  users in workspace assign it to one or more users in the same workspace
+- [x] workspace creator or task poster can edit the task
+- [x] workspace creator or task poster can delete the task
 
 ## Installation
 
