@@ -67,6 +67,24 @@ export class UsersService {
     return user;
   }
 
+  async findWorkspacesJoined(currentUser: User) {
+    const user = await this.userRepo.findOne({
+      where: { id: currentUser.id },
+      select: ['id', 'username', 'password'],
+      relations: ['workspaces_joined'],
+    });
+    return user.workspaces_joined;
+  }
+
+  async findWorkspacesCreate(currentUser: User) {
+    const user = await this.userRepo.findOne({
+      where: { id: currentUser.id },
+      select: ['id', 'username', 'password'],
+      relations: ['workspaces_created'],
+    });
+    return user.workspaces_created;
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
 

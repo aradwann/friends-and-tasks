@@ -40,6 +40,11 @@ export class WorkspacesController {
     return this.workspacesService.findAll(paginationQuery);
   }
 
+  @Get('/me')
+  findMyWorkspaces(@CurrentUser() user: User) {
+    return this.workspacesService.findUserWorkspaces(user);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.workspacesService.findOne(id);

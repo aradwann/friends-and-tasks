@@ -43,6 +43,13 @@ export class WorkspacesService {
     return this.workspaceRepo.find({ skip: offset, take: limit });
   }
 
+  async findUserWorkspaces(user: User) {
+    const createdWorkspaces = await this.usersService.findWorkspacesCreate(
+      user,
+    );
+    const joinedWorkspaces = await this.usersService.findWorkspacesJoined(user);
+    return [...createdWorkspaces, ...joinedWorkspaces];
+  }
   /**
    * find one workspace with all its details (with the relations [users, tasks] on )
    * @param id
