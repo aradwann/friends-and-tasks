@@ -145,7 +145,8 @@ export class WorkspacesService {
    * @returns boolean
    */
   checkIfUserInWorkspace(user: User, workspace: Workspace) {
-    return workspace.users.includes(user);
+    const workspaceUsersIdArr = workspace.users.map((user) => user.id);
+    return workspaceUsersIdArr.includes(user.id);
   }
   /**
    * check if each user in the users array is in the workspace

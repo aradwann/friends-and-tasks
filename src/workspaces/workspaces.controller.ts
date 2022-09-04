@@ -109,7 +109,7 @@ export class WorkspacesController {
       workspace,
     );
     if (!isUserInWorkspace) {
-      if (workspace.creator !== user) {
+      if (workspace.creator.id !== user.id) {
         throw new ForbiddenException(
           'only users in workspace can post tasks in it',
         );
