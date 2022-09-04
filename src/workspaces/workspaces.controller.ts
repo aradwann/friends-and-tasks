@@ -88,15 +88,21 @@ export class WorkspacesController {
     return this.workspacesService.updateWorkspaceUsers(+id, usersIdsDto);
   }
 
-  // @Post(':id/users')
-  // addUsersFromWorkspace(@Param('id') id: string, @Body() userIdsDto: UserIdsDto) {
-  //   return this.workspacesService.add_users(+id, userIdsDto);
-  // }
+  @Post(':id/users')
+  addUsertoWorkspace(
+    @Param('id') id: number,
+    @Body() { username }: { username: string },
+  ) {
+    return this.workspacesService.addUserToWorkspace(id, username);
+  }
 
-  // @Delete(':id/users')
-  // removeUsersFromWorkspace(@Param('id') id: string, @Body() userIdsDto: UserIdsDto) {
-  //   return this.workspacesService.remove_users(+id, userIdsDto);
-  // }
+  @Delete(':id/users')
+  removeUserFromWorkspace(
+    @Param('id') id: number,
+    @Body() { username }: { username: string },
+  ) {
+    return this.workspacesService.removeUserFromWorkspace(id, username);
+  }
 
   ////////////////////////////// workspace tasks /////////////////////////////////////
 

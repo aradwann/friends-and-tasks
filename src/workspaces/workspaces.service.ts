@@ -118,35 +118,35 @@ export class WorkspacesService {
     return await this.workspaceRepo.save(workspace);
   }
 
-  // async add_users(id: number, userIdsDto: UserIdsDto) {
-  //   // find the workspace and get it
-  //   const workspace = await this.findOne(id);
+  async addUserToWorkspace(id: number, username: string) {
+    // find the workspace and get it
+    const workspace = await this.findOne(id);
 
-  //   // get the list of users but their ids
-  //   const users = await this.usersService.findUsersByIdArray(
-  //     userIdsDto.userIds,
-  //   );
+    // get the list of users but their ids
+    const user = await this.usersService.findOneByUsernameWithPassword(
+      username,
+    );
 
-  //   // push those users to the workspace users array
-  //   workspace.users.push(...users);
+    // push those users to the workspace users array
+    workspace.users.push(user);
 
-  //   // save changes to the database and return the saved workspace
-  //   return await this.workspaceRepo.save(workspace);
-  // }
+    // save changes to the database and return the saved workspace
+    return await this.workspaceRepo.save(workspace);
+  }
 
-  // async remove_users(id: number, userIdsDto: UserIdsDto) {
-  //   // find the workspace and get it
-  //   const workspace = await this.findOne(id);
+  async removeUserFromWorkspace(id: number, username: string) {
+    // find the workspace and get it
+    const workspace = await this.findOne(id);
 
-  //   // push those users to the workspace users array
-  //   const remainedUsers = workspace.users.filter(
-  //     (user) => !userIdsDto.userIds.includes(user.id),
-  //   );
+    // filter the workspace users and return those who doesn't match the removed user username
+    const remainedUsers = workspace.users.filter(
+      (user) => user.username !== username,
+    );
 
-  //   workspace.users = remainedUsers;
+    workspace.users = remainedUsers;
 
-  //   return this.workspaceRepo.save(workspace);
-  // }
+    return this.workspaceRepo.save(workspace);
+  }
 
   /**
    * check if the user in workspace
