@@ -50,6 +50,16 @@ export class WorkspacesService {
     const joinedWorkspaces = await this.usersService.findWorkspacesJoined(user);
     return [...createdWorkspaces, ...joinedWorkspaces];
   }
+  async findUserCreatedWorkspaces(user: User) {
+    const createdWorkspaces = await this.usersService.findWorkspacesCreate(
+      user,
+    );
+    return createdWorkspaces;
+  }
+  async findUserJoinedWorkspaces(user: User) {
+    const joinedWorkspaces = await this.usersService.findWorkspacesJoined(user);
+    return joinedWorkspaces;
+  }
   /**
    * find one workspace with all its details (with the relations [users, tasks] on )
    * @param id
