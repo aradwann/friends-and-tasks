@@ -206,13 +206,12 @@ export class WorkspacesService {
     workspaceId: number,
     paginationQuery: PaginationQueryDto,
   ) {
-    // const tasks = this.tasksService.findAllTasksInWorkspace(
-    //   workspaceId,
-    //   paginationQuery,
-    // );
+    const tasks = await this.tasksService.findAllTasksInWorkspace(
+      workspaceId,
+      paginationQuery,
+    );
 
-    const workspace = await this.findOne(workspaceId);
-    return workspace.tasks;
+    return tasks;
   }
 
   async findTaskInWorkspace(workspaceId: number, taskId: number) {
