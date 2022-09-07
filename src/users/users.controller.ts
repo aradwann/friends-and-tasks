@@ -18,6 +18,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { RoleEnum } from './enums/role.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Public } from '../auth/decorators/public.decorator';
+import { CurrentUser } from './decorators/user.decorator';
+import { User } from './entities/user.entity';
 
 @ApiTags('users')
 @Controller('users')
@@ -35,6 +37,11 @@ export class UsersController {
   @Get()
   findAll(@Query() paginationQuery: PaginationQueryDto) {
     return this.usersService.findAll(paginationQuery);
+  }
+
+  @Get('me')
+  getProfile(@CurrentUser() user: User) {
+    return user;
   }
 
   @ApiNotFoundResponse({ description: 'not found' })
