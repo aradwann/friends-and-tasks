@@ -6,6 +6,8 @@ The backend repo of tasks
 
 an application for task management for teams
 
+- [x] A User can create account with username, email, password
+- [x] A User can login via username and password, requests after that is authenticated via JWT
 - [x] A User can create workspace/s and add other users to or remove them from the workspace he created\
 - [x] only the creator of the workspace can add or remove users
 - [x] users in the workspace can post tasks in the workspace 
