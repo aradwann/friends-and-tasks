@@ -67,6 +67,21 @@ export class UsersService {
     return user;
   }
 
+  async findOneByUsername(username: string) {
+    const user = await this.userRepo.findOne({
+      where: { username },
+      relations: ['roles'],
+    });
+
+    // throw 404 error id user is not found
+    if (!user) {
+      throw new NotFoundException(
+        `user with username ${username} is not found`,
+      );
+    }
+    return user;
+  }
+
   async findWorkspacesJoined(currentUser: User) {
     const user = await this.userRepo.findOne({
       where: { id: currentUser.id },
