@@ -10,6 +10,7 @@ import { WorkspacesModule } from './workspaces/workspaces.module';
 import * as Joi from 'joi';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     UsersModule,
     AuthModule,
     WorkspacesModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [
