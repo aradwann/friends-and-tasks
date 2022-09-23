@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { AuthenticationIOAdapter } from './chat/gateway/adapters/authenticationIO.adapter';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
@@ -26,6 +27,9 @@ async function bootstrap() {
 
   /////////////////////// SETUP GLOBAL FILTERS ///////////////////
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  ///////////////////// SETPUP WEBSOCKETS AUTHENTICATION ADAPTER //////////
+  app.useWebSocketAdapter(new AuthenticationIOAdapter(app));
 
   ////////////////////////////// SETUP SWAGGER (OPEN API) ////////////////////////
   const options = new DocumentBuilder()
