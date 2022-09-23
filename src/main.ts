@@ -29,7 +29,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   ///////////////////// SETPUP WEBSOCKETS AUTHENTICATION ADAPTER //////////
-  app.useWebSocketAdapter(new AuthenticationIOAdapter(app));
+  // app.useWebSocketAdapter(new AuthenticationIOAdapter(app));
 
   ////////////////////////////// SETUP SWAGGER (OPEN API) ////////////////////////
   const options = new DocumentBuilder()

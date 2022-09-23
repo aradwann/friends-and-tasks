@@ -3,6 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ServerOptions } from 'socket.io';
 
+// this is an approach to handle socketIO auth using adapters
+// I will leave it as it's here even if I am not using it
+// until i figure out a way to attach the user object to messages ater being authenticated
+
 export class AuthenticationIOAdapter extends IoAdapter {
   private readonly jwtService: JwtService;
   constructor(private app: INestApplicationContext) {
