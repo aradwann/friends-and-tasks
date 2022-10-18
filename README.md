@@ -10,11 +10,13 @@ an application for task management for teams
 - [x] A User can login via username and password, requests after that is authenticated via JWT
 - [x] A User can create workspace/s and add other users to or remove them from the workspace he created\
 - [x] only the creator of the workspace can add or remove users
-- [x] users in the workspace can post tasks in the workspace 
+- [x] users in the workspace can post tasks in the workspace
 - [x] only users in the workspace can view the tasks in that workspace
-- [x]  users in workspace assign it to one or more users in the same workspace
+- [x] users in workspace assign it to one or more users in the same workspace
 - [x] workspace creator or task poster can edit the task
 - [x] workspace creator or task poster can delete the task
+- [ ] each workspace has a chat room (only users in the workspace can send messages)
+- [ ] various types of files can be sent in the chat room
 
 ## Installation
 
@@ -24,7 +26,7 @@ $ npm install
 
 ## Running the app
 
-creating the postgres database for development 
+creating the postgres database for development
 
 ```bash
 docker-compose up db -d
@@ -57,6 +59,6 @@ $ npm run test:cov
 
 ## Swagger (OpenAPI)
 
-you can access the swagger API schema through the endpoint (dev mode) 
+you can access the swagger API schema through the endpoint (dev mode)
 
-``` localhost:8000/api ```
+`localhost:8000/api`
