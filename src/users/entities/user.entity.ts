@@ -13,6 +13,8 @@ import {
 } from 'typeorm';
 import { Role } from './role.entity';
 import { Workspace } from 'src/workspaces/entities/workspace.entity';
+import { Room } from 'src/chat/entities/room.entity';
+import { Message } from 'src/chat/entities/message.entity';
 
 @Entity()
 export class User {
@@ -65,4 +67,10 @@ export class User {
   // workspaces joined by the user
   @ManyToMany(() => Workspace, (workspace) => workspace.users)
   workspaces_joined: Workspace[];
+
+  @ManyToMany(() => Room, (room) => room.users)
+  rooms: Room[];
+
+  @OneToMany(() => Message, (message) => message.sender)
+  messages: Message[];
 }

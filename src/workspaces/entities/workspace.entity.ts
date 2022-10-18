@@ -7,10 +7,12 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Task } from '../../tasks/entities/task.entity';
+import { Room } from 'src/chat/entities/room.entity';
 
 @Entity()
 export class Workspace {
@@ -41,4 +43,7 @@ export class Workspace {
 
   @OneToMany(() => Task, (task) => task.assignor)
   tasks: Task[];
+
+  @OneToOne(() => Room, (room) => room.workspace)
+  room: Room;
 }
