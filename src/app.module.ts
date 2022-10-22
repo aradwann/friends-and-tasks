@@ -5,36 +5,49 @@ import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { WorkspacesModule } from './workspaces/workspaces.module';
-import * as Joi from 'joi';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { ChatModule } from './chat/chat.module';
+import configuration from './config/configuration';
+import { validate } from './config/env.validation';
+
+let path;
+switch (process.env.NODE_ENV) {
+  case 'test':
+    path = '.env.test';
+    break;
+  case 'production':
+    path = '.env.production';
+    break;
+
+  default:
+    path = '.env.development';
+}
 
 @Module({
   imports: [
     // this should be imported first because the following modules depends on it
     ConfigModule.forRoot({
-      validationSchema: Joi.object({
-        NODE_ENV: Joi.string()
-          .valid('development', 'production', 'test')
-          .default('development'),
-        PORT: Joi.number().default(8000),
-        DATABASE_HOST: Joi.required(),
-        // the default needs to be changed once I create env vars file for each NODE_ENV state
-        DATABASE_PORT: Joi.number().default(5433),
-      }),
+      validate,
+      load: [configuration],
+      isGlobal: true,
+      envFilePath: path,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DATABASE_HOST,
-      port: +process.env.DATABSE_PORT,
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
-      autoLoadEntities: true,
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DATABASE_HOST'),
+        port: +configService.get('DATABASE_PORT'),
+        username: configService.get('DATABASE_USERNAME'),
+        password: configService.get('DATABASE_PASSWORD'),
+        database: configService.get('DATABASE_NAME'),
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
     }),
     TasksModule,
     UsersModule,

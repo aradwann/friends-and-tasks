@@ -9,7 +9,7 @@ services:
 
   test-db:
     image: postgres:14.4-alpine
-    restart: always
+    # restart: always
     ports:
       - 5433:5432
     environment:

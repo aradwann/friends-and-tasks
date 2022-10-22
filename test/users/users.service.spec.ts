@@ -1,10 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
-import { UsersService } from './users.service';
+import { CreateUserDto } from '../../src/users/dto/create-user.dto';
+import { User } from '../../src/users/entities/user.entity';
+import { UsersService } from '../../src/users/users.service';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -18,7 +18,7 @@ describe('UsersService', () => {
   let userRepo: MockRepository;
 
   beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const module = await Test.createTestingModule({
       providers: [
         UsersService,
         { provide: getRepositoryToken(User), useValue: createMockRepository() },
@@ -94,6 +94,18 @@ describe('UsersService', () => {
         expect(error).toBeInstanceOf(BadRequestException);
         expect(error.message).toEqual('email is already taken');
       }
+    });
+  });
+
+  describe('Find User', () => {
+    it('successfully', () => {
+      userRepo.findOneBy.mockReturnValue({
+        id: 1,
+        username: 'test',
+        email: 'test@email.com',
+        password: 'testpassword',
+      });
+      service.findOne(1);
     });
   });
   it.todo('update');
